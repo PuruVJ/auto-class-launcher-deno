@@ -51,9 +51,7 @@ function openClassLink() {
 
   if (typeof upcomingClass === 'undefined') {
     return console.log(
-      colorize(
-        '<yellow>No more classes for today 🥳🥳🥳\n Feel free to close this window.</yellow>'
-      )
+      colorize('<yellow>No more classes for today 🥳🥳🥳. Feel free to close this window.</yellow>')
     );
   }
 
