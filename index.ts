@@ -57,13 +57,15 @@ function openClassLink() {
     );
   }
 
-  console.log(
-    colorize(
-      `<blue><b>[RUNNING]</b> Running! Launching next class <b>${upcomingClass?.name} @ ${
-        upcomingClass.hour - 1
-      }:55</b></blue>`
-    )
-  );
+  if (!todaysClassLaunched[upcomingClass.name]) {
+    console.log(
+      colorize(
+        `<blue><b>[RUNNING]</b> Running! Launching next class <b>${upcomingClass?.name} @ ${
+          upcomingClass.hour - 1
+        }:55</b></blue>`
+      )
+    );
+  }
 
   if (
     hour === upcomingClass.hour - 1 &&
