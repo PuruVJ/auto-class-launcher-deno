@@ -12,7 +12,7 @@ export type ClassName =
 export type DayOfClass = 'mon' | 'tue' | 'wed' | 'thu' | 'fri';
 
 export type ClassLink = {
-  times: { day: DayOfClass; hour: number }[];
+  times: { day: DayOfClass; time: string }[];
   link: string;
 };
 
@@ -20,60 +20,60 @@ export const classLinks: Record<ClassName, ClassLink> = {
   'diff-equations': {
     link: 'https://meet.google.com/ajp-noxv-zng?authuser=2',
     times: [
-      { day: 'mon', hour: 9 },
-      { day: 'tue', hour: 11 },
-      { day: 'thu', hour: 12 },
-      { day: 'fri', hour: 10 },
+      { day: 'mon', time: '9:00' },
+      { day: 'tue', time: '11:00' },
+      { day: 'thu', time: '12:00' },
+      { day: 'fri', time: '10:00' },
     ],
   },
   'disc-structures': {
     link: 'https://meet.google.com/txo-tvbd-zvt?authuser=2',
     times: [
-      { day: 'tue', hour: 12 },
-      { day: 'wed', hour: 12 },
-      { day: 'thu', hour: 11 },
-      { day: 'fri', hour: 15 },
+      { day: 'tue', time: '12:00' },
+      { day: 'wed', time: '12:00' },
+      { day: 'thu', time: '11:00' },
+      { day: 'fri', time: '15:00' },
     ],
   },
   dsa: {
     link: 'https://meet.google.com/iha-ajkk-map?authuser=2',
     times: [
-      { day: 'tue', hour: 10 },
-      { day: 'thu', hour: 10 },
-      { day: 'fri', hour: 14 },
+      { day: 'tue', time: '10:00' },
+      { day: 'thu', time: '10:00' },
+      { day: 'fri', time: '14:00' },
     ],
   },
   'practice-dsa': {
     link: 'https://meet.google.com/iha-ajkk-map?authuser=2',
-    times: [{ day: 'tue', hour: 14 }],
+    times: [{ day: 'tue', time: '14:00' }],
   },
   'eng-graphics': {
     link: 'https://meet.google.com/uaa-brhr-rwy?authuser=2',
     times: [
-      { day: 'mon', hour: 12 },
-      { day: 'thu', hour: 14 },
-      { day: 'mon', hour: 12 },
+      { day: 'mon', time: '12:00' },
+      { day: 'thu', time: '14:00' },
+      { day: 'mon', time: '12:00' },
     ],
   },
   'practice-eng-graphics': {
     link: 'https://meet.google.com/uaa-brhr-rwy?authuser=2',
-    times: [{ day: 'mon', hour: 14 }],
+    times: [{ day: 'mon', time: '14:00' }],
   },
   'practice-manufacturing': {
     link: 'https://meet.google.com/zif-cotc-gjc?authuser=2',
-    times: [{ day: 'thu', hour: 16 }],
+    times: [{ day: 'thu', time: '16:00' }],
   },
   physics: {
     link: 'https://meet.google.com/osh-yivo-sof?authuser=2',
     times: [
-      { day: 'mon', hour: 10 },
-      { day: 'tue', hour: 9 },
-      { day: 'thu', hour: 9 },
-      { day: 'fri', hour: 11 },
+      { day: 'mon', time: '10:00' },
+      { day: 'tue', time: '9:00' },
+      { day: 'thu', time: '9:00' },
+      { day: 'fri', time: '11:00' },
     ],
   },
   'env-design': {
     link: 'https://meet.google.com/rzb-yajj-xqk?authuser=2',
-    times: [{ day: 'fri', hour: 16 }],
+    times: [{ day: 'fri', time: '16:00' }],
   },
 };

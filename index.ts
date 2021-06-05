@@ -1,25 +1,48 @@
 import { opn } from 'https://denopkg.com/hashrock/deno-opn/opn.ts';
 import { DayOfClass, classLinks, ClassName } from './classLinks.ts';
 import { colorize } from 'https://deno.land/x/ink@1.3/mod.ts';
+import { normalize } from 'https://deno.land/std@0.97.0/path/mod.ts';
+import { exists } from 'https://deno.land/std@0.97.0/fs/mod.ts';
+import { askForDetails } from './cli.ts';
 
 const WEEK_DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
 
-const todaysClassLaunched: Partial<Record<ClassName, boolean>> = {};
+const todaysClassLaunched: Record<string, boolean> = {};
 
-function getTimesOfClassesToday(dayOfWeek: DayOfClass) {
-  const classesContent = Object.entries(classLinks);
+const colorLog = (et: string) => console.log(colorize(et));
 
-  const classesToday: { name: ClassName; hour: number; link: string }[] = [];
+function getNMinutesAgo(
+  [hours, minutes]: [number, number],
+  n: number
+): [hours: number, minutes: number] {
+  if (minutes < n) hours--;
+
+  minutes -= n;
+
+  return [hours, minutes];
+}
+
+function getHourAndMinutes(time: string): [hours: number, minutes: number] {
+  const [hour, minutes] = time.split(':');
+
+  return [+hour, +minutes];
+}
+
+function getClassesToday(dayOfWeek: DayOfClass, config: typeof classLinks) {
+  const classesContent = Object.entries(config);
+
+  const classesToday: { name: ClassName; hour: number; minutes: number; link: string }[] = [];
 
   for (const [className, classContent] of classesContent) {
     const todayTime = classContent.times.find((time) => time.day === dayOfWeek);
 
-    // Also populate `todaysClassLaunched`
-
     if (typeof todayTime === 'undefined') continue;
 
+    const [hour, minutes] = getHourAndMinutes(todayTime.time);
+
     classesToday.push({
-      hour: todayTime.hour,
+      hour,
+      minutes,
       link: classContent.link,
       name: className as ClassName,
     });
@@ -35,57 +58,96 @@ function getTimesOfClassesToday(dayOfWeek: DayOfClass) {
   return classesToday.sort((a, b) => a.hour - b.hour);
 }
 
-function openClassLink() {
+function openClassLink(config: typeof classLinks) {
   const date = new Date();
 
   const weekDay = WEEK_DAYS[date.getDay()];
   const hour = date.getHours();
   const minutes = date.getMinutes();
 
-  if (!['mon', 'tue', 'wed', 'thu', 'fri'].includes(weekDay)) return;
-
   // Today can be a class
 
-  const todayClasses = getTimesOfClassesToday(weekDay as DayOfClass);
-  const upcomingClass = todayClasses.find((todayClass) => todayClass.hour > hour);
+  const todayClasses = getClassesToday(weekDay as DayOfClass, config);
+  const upcomingClass = todayClasses.find((todayClass) => todayClass.hour >= hour);
 
   if (typeof upcomingClass === 'undefined') {
-    return console.log(
-      colorize('<yellow>No more classes for today 🥳🥳🥳. Feel free to close this window.</yellow>')
+    return colorLog(
+      '<yellow>No more classes for today 🥳🥳🥳. Feel free to close this window.</yellow>'
     );
   }
 
+  // Get the time 5 minutes before the time
+  const [launchHours, launchMinutes] = getNMinutesAgo(
+    [upcomingClass.hour, upcomingClass.minutes],
+    5
+  );
+
   if (!todaysClassLaunched[upcomingClass.name]) {
-    console.log(
-      colorize(
-        `<blue><b>[RUNNING]</b> Running! Launching next class <b>${upcomingClass?.name} @ ${
-          upcomingClass.hour - 1
-        }:55</b></blue>`
-      )
+    colorLog(
+      `<blue>
+<b>[RUNNING]</b>
+Launching next class <b>${upcomingClass.name} @ ${launchHours}:${launchMinutes}</b>
+</blue>`
     );
   }
 
   if (
-    hour === upcomingClass.hour - 1 &&
-    minutes >= 55 &&
+    hour === launchHours &&
+    minutes >= launchMinutes &&
     !todaysClassLaunched[upcomingClass.name]
   ) {
     // Launch class
-    console.log(
-      colorize(`<green><b>[LAUNCHING]</b> Launching <b>${upcomingClass.name}</b></green>`)
-    );
+    colorLog(`<green><b>[LAUNCHING]</b> Launching <b>${upcomingClass.name}</b></green>`);
 
     opn(upcomingClass.link);
     todaysClassLaunched[upcomingClass.name] = true;
   }
 }
 
-function main() {
-  setInterval(() => openClassLink(), 10 * 1000);
-}
-
 try {
-  main();
+  // Try to read the config file
+  const APPDATA_PATH = Deno.env.get('APPDATA') || Deno.env.get('HOME');
+
+  const configFilePath = normalize(`${APPDATA_PATH}/auto-class-launcher-timetable.json`);
+  const configFileExists = await exists(configFilePath);
+
+  if (!configFileExists) {
+    // Make the file
+    const encoder = new TextEncoder();
+    await Deno.writeFile(configFilePath, encoder.encode(JSON.stringify(classLinks)));
+
+    await askForDetails(configFilePath);
+  } else {
+    // Announce all the important things, like repository, the config file URL
+    colorLog(`<cyan>
+    __          ________ _      _____ ____  __  __ ______  
+    \\ \\        / /  ____| |    / ____/ __ \\|  \\/  |  ____| 
+     \\ \\  /\\  / /| |__  | |   | |   | |  | | \\  / | |__    
+      \\ \\/  \\/ / |  __| | |   | |   | |  | | |\\/| |  __|   
+       \\  /\\  /  | |____| |___| |___| |__| | |  | | |____  
+        \\/  \\/   |______|______\\_____\\____/|_|  |_|______|       </cyan>`);
+
+    colorLog(
+      '\n\nThis is the <green>Auto Class launcher</green> project! Opens up your class links based on your timetable 5 minutes before'
+    );
+
+    colorLog(
+      `\nThis project works based on a config file stored in your computer. Your timetable and links are there only. `
+    );
+
+    colorLog(`Your config file is stored at <green>${configFilePath}</green>.`);
+
+    colorLog(`\n<yellow>Please modify the file for your own purposes.</yellow>`);
+
+    colorLog(
+      `\nTo read about how to modify the file and its format, go to <red>https://github.com/PuruVJ/auto-class-launcher</red>.`
+    );
+  }
+
+  const decoder = new TextDecoder('utf-8');
+  const config = JSON.parse(decoder.decode(await Deno.readFile(configFilePath)));
+
+  setInterval(() => openClassLink(config), 10 * 1000);
 } catch (e) {
-  console.log(colorize(`<red>${e}</red>`));
+  colorLog(`<red>${e}</red>`);
 }
