@@ -13,7 +13,7 @@ export type DayOfClass = 'mon' | 'tue' | 'wed' | 'thu' | 'fri';
 
 export type ClassLink = {
   times: { day: DayOfClass; time: string }[];
-  link: string;
+  link?: string;
 };
 
 export const classLinks: Record<ClassName, ClassLink> = {
@@ -73,7 +73,6 @@ export const classLinks: Record<ClassName, ClassLink> = {
     ],
   },
   'env-design': {
-    link: 'https://meet.google.com/rzb-yajj-xqk?authuser=2',
     times: [{ day: 'fri', time: '16:00' }],
   },
 };
