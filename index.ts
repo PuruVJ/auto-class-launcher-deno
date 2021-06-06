@@ -44,7 +44,7 @@ function getClassesToday(dayOfWeek: DayOfClass, config: typeof classLinks) {
     classesToday.push({
       hour,
       minutes,
-      link: classContent.link,
+      link: classContent.link || '',
       name: className as ClassName,
     });
   }
