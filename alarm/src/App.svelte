@@ -57,7 +57,7 @@
     height: inherit;
 
     background-color: rgba(var(--app-color-dark-rgb), 0.4);
-    animation: ripple 1s infinite;
+    animation: ripple 1.5s infinite;
     animation-timing-function: ease;
   }
 
@@ -110,6 +110,11 @@
     0% {
       transform: scale(1);
       opacity: 1;
+    }
+
+    60% {
+      transform: scale(2, 2);
+      opacity: 0;
     }
 
     100% {
