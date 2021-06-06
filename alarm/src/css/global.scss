@@ -35,3 +35,7 @@ body {
 
   overflow-x: hidden;
 }
+
+::selection {
+  background-color: rgba(var(--app-color-primary-rgb), 0.2);
+}

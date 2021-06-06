@@ -117,4 +117,10 @@
       opacity: 0;
     }
   }
+
+  @media screen and (max-width: 600px) {
+    h1 {
+      font-size: 2.618rem;
+    }
+  }
 </style>

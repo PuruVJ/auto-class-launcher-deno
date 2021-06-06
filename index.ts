@@ -99,7 +99,12 @@ Launching next class <b>${upcomingClass.name} @ ${launchHours}:${launchMinutes}<
     // Launch class
     colorLog(`<green><b>[LAUNCHING]</b> Launching <b>${upcomingClass.name}</b></green>`);
 
-    opn(upcomingClass.link);
+    if (upcomingClass.link) opn(upcomingClass.link);
+    else
+      opn(
+        `https://auto-class-launcher-alarm.vercel.app/?className=${upcomingClass.name}&timing=${upcomingClass.hour}:${upcomingClass.minutes}`
+      );
+
     todaysClassLaunched[upcomingClass.name] = true;
   }
 }
