@@ -134,7 +134,7 @@ try {
   if (!configFileExists) {
     // Make the file
     const encoder = new TextEncoder();
-    await Deno.writeFile(configFilePath, encoder.encode(JSON.stringify(classLinks)));
+    await Deno.writeFile(configFilePath, encoder.encode(JSON.stringify(classLinks, null, 2)));
 
     await askForDetails(configFilePath);
   } else {

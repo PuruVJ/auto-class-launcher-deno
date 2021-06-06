@@ -60,7 +60,6 @@ export const classLinks: Record<ClassName, ClassLink> = {
     times: [{ day: 'mon', time: '14:00' }],
   },
   'practice-manufacturing': {
-    link: 'https://meet.google.com/zif-cotc-gjc?authuser=2',
     times: [{ day: 'thu', time: '16:00' }],
   },
   physics: {
