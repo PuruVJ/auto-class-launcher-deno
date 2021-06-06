@@ -1,0 +1,17 @@
+{
+  "version": "0.0.0",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.10",
+    "svelte": "^3.38.2",
+    "vite": "^2.3.6"
+  },
+  "dependencies": {
+    "@mdi/js": "^5.9.55",
+    "sass": "^1.34.1"
+  }
+}
