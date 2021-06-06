@@ -3,6 +3,7 @@ import { DayOfClass, classLinks, ClassName } from './classLinks.ts';
 import { colorize } from 'https://deno.land/x/ink@1.3/mod.ts';
 import { normalize } from 'https://deno.land/std@0.97.0/path/mod.ts';
 import { exists } from 'https://deno.land/std@0.97.0/fs/mod.ts';
+import { isFuture, isPast } from 'https://cdn.skypack.dev/date-fns';
 import { askForDetails } from './cli.ts';
 
 const WEEK_DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
@@ -51,7 +52,10 @@ function getClassesToday(dayOfWeek: DayOfClass, config: typeof classLinks) {
   if (Object.keys(todaysClassLaunched).length === 0) {
     // Fill up the object
     for (const classToday of classesToday) {
-      todaysClassLaunched[classToday.name] = false;
+      const date = new Date();
+      date.setHours(classToday.hour, classToday.minutes);
+
+      todaysClassLaunched[classToday.name] = isPast(date);
     }
   }
 
@@ -68,9 +72,14 @@ function openClassLink(config: typeof classLinks) {
   // Today can be a class
 
   const todayClasses = getClassesToday(weekDay as DayOfClass, config);
-  const upcomingClass = todayClasses.find((todayClass) => todayClass.hour >= hour);
+  const upcomingClass = todayClasses.find((todayClass) => {
+    const classDate = new Date();
+    classDate.setHours(todayClass.hour, todayClass.minutes);
 
-  if (typeof upcomingClass === 'undefined') {
+    return isFuture(classDate);
+  });
+
+  if (typeof upcomingClass === 'undefined' || Object.values(todaysClassLaunched).every(Boolean)) {
     return colorLog(
       '<yellow>No more classes for today 🥳🥳🥳. Feel free to close this window.</yellow>'
     );
@@ -85,8 +94,9 @@ function openClassLink(config: typeof classLinks) {
   if (!todaysClassLaunched[upcomingClass.name]) {
     colorLog(
       `<blue>
-<b>[RUNNING]</b>
-Launching next class <b>${upcomingClass.name} @ ${launchHours}:${launchMinutes}</b>
+<b>[RUNNING]</b> Launching next class <b>${upcomingClass.name} @ ${launchHours}:${(
+        '0' + launchMinutes
+      ).slice(-2)}</b>
 </blue>`
     );
   }
@@ -99,11 +109,14 @@ Launching next class <b>${upcomingClass.name} @ ${launchHours}:${launchMinutes}<
     // Launch class
     colorLog(`<green><b>[LAUNCHING]</b> Launching <b>${upcomingClass.name}</b></green>`);
 
-    if (upcomingClass.link) opn(upcomingClass.link);
-    else
+    if (upcomingClass.link) {
+      opn(upcomingClass.link);
+    } else {
       opn(
         `https://auto-class-launcher-alarm.vercel.app/?className=${upcomingClass.name}&timing=${upcomingClass.hour}:${upcomingClass.minutes}`
       );
+    }
+    console.log('Launched');
 
     todaysClassLaunched[upcomingClass.name] = true;
   }
