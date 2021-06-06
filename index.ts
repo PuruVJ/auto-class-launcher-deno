@@ -4,7 +4,6 @@ import { colorize } from 'https://deno.land/x/ink@1.3/mod.ts';
 import { normalize } from 'https://deno.land/std@0.97.0/path/mod.ts';
 import { exists } from 'https://deno.land/std@0.97.0/fs/mod.ts';
 import { isFuture, isPast } from 'https://cdn.skypack.dev/date-fns';
-import { askForDetails } from './cli.ts';
 
 const WEEK_DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
 
@@ -64,10 +63,7 @@ function getClassesToday(dayOfWeek: DayOfClass, config: typeof classLinks) {
 
 function openClassLink(config: typeof classLinks) {
   const date = new Date();
-
   const weekDay = WEEK_DAYS[date.getDay()];
-  const hour = date.getHours();
-  const minutes = date.getMinutes();
 
   // Today can be a class
 
@@ -93,19 +89,17 @@ function openClassLink(config: typeof classLinks) {
 
   if (!todaysClassLaunched[upcomingClass.name]) {
     colorLog(
-      `<blue>
-<b>[RUNNING]</b> Launching next class <b>${upcomingClass.name} @ ${launchHours}:${(
-        '0' + launchMinutes
-      ).slice(-2)}</b>
+      `<blue><b>[RUNNING]</b> Launching next class <b>${
+        upcomingClass.name
+      } @ ${launchHours}:${`0${launchMinutes}`.slice(-2)}</b>
 </blue>`
     );
   }
 
-  if (
-    hour === launchHours &&
-    minutes >= launchMinutes &&
-    !todaysClassLaunched[upcomingClass.name]
-  ) {
+  const launchDate = new Date();
+  launchDate.setHours(launchHours, launchMinutes, 0);
+
+  if (isPast(launchDate) && !todaysClassLaunched[upcomingClass.name]) {
     // Launch class
     colorLog(`<green><b>[LAUNCHING]</b> Launching <b>${upcomingClass.name}</b></green>`);
 
@@ -115,10 +109,9 @@ function openClassLink(config: typeof classLinks) {
       opn(
         `https://auto-class-launcher-alarm.vercel.app/?className=${encodeURIComponent(
           upcomingClass.name
-        )}&timing=${upcomingClass.hour}:${('0' + upcomingClass.minutes).slice(-2)}`
+        )}&timing=${upcomingClass.hour}:${`0${upcomingClass.minutes}`.slice(-2)}`
       );
     }
-    console.log('Launched');
 
     todaysClassLaunched[upcomingClass.name] = true;
   }
@@ -135,11 +128,9 @@ try {
     // Make the file
     const encoder = new TextEncoder();
     await Deno.writeFile(configFilePath, encoder.encode(JSON.stringify(classLinks, null, 2)));
-
-    await askForDetails(configFilePath);
-  } else {
-    // Announce all the important things, like repository, the config file URL
-    colorLog(`<cyan>
+  }
+  // Announce all the important things, like repository, the config file URL
+  colorLog(`<cyan>
     __          ________ _      _____ ____  __  __ ______  
     \\ \\        / /  ____| |    / ____/ __ \\|  \\/  |  ____| 
      \\ \\  /\\  / /| |__  | |   | |   | |  | | \\  / | |__    
@@ -147,22 +138,21 @@ try {
        \\  /\\  /  | |____| |___| |___| |__| | |  | | |____  
         \\/  \\/   |______|______\\_____\\____/|_|  |_|______|       </cyan>`);
 
-    colorLog(
-      '\n\nThis is the <green>Auto Class launcher</green> project! Opens up your class links based on your timetable 5 minutes before'
-    );
+  colorLog(
+    '\n\nThis is the <green>Auto Class launcher</green> project! Opens up your class links based on your timetable 5 minutes before'
+  );
 
-    colorLog(
-      `\nThis project works based on a config file stored in your computer. Your timetable and links are there only. `
-    );
+  colorLog(
+    `\nThis project works based on a config file stored in your computer. Your timetable and links are there only. `
+  );
 
-    colorLog(`Your config file is stored at <green>${configFilePath}</green>.`);
+  colorLog(`Your config file is stored at <green>${configFilePath}</green>`);
 
-    colorLog(`\n<yellow>Please modify the file for your own purposes.</yellow>`);
+  colorLog(`\n<yellow>Please modify the file for your own purposes.</yellow>`);
 
-    colorLog(
-      `\nTo read about how to modify the file and its format, go to <red>https://github.com/PuruVJ/auto-class-launcher</red>.`
-    );
-  }
+  colorLog(
+    `\nTo read about how to modify the file and its format, go to <red>https://github.com/PuruVJ/auto-class-launcher</red>.`
+  );
 
   const decoder = new TextDecoder('utf-8');
   const config = JSON.parse(decoder.decode(await Deno.readFile(configFilePath)));
