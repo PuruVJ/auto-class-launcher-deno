@@ -113,9 +113,9 @@ function openClassLink(config: typeof classLinks) {
       opn(upcomingClass.link);
     } else {
       opn(
-        `https://auto-class-launcher-alarm.vercel.app/?className=${upcomingClass.name}&timing=${
-          upcomingClass.hour
-        }:${('0' + upcomingClass.minutes).slice(-2)}`
+        `https://auto-class-launcher-alarm.vercel.app/?className=${encodeURIComponent(
+          upcomingClass.name
+        )}&timing=${upcomingClass.hour}:${('0' + upcomingClass.minutes).slice(-2)}`
       );
     }
     console.log('Launched');
