@@ -17,7 +17,7 @@ function getNMinutesAgo(
 ): [hours: number, minutes: number] {
   if (minutes < n) hours--;
 
-  minutes -= n;
+  minutes = (minutes + 60 - n) % 60;
 
   return [hours, minutes];
 }
@@ -129,6 +129,7 @@ try {
     const encoder = new TextEncoder();
     await Deno.writeFile(configFilePath, encoder.encode(JSON.stringify(classLinks, null, 2)));
   }
+
   // Announce all the important things, like repository, the config file URL
   colorLog(`<cyan>
     __          ________ _      _____ ____  __  __ ______  
