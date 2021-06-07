@@ -61,7 +61,7 @@ function getClassesToday(dayOfWeek: DayOfClass, config: typeof classLinks) {
   return classesToday.sort((a, b) => a.hour - b.hour);
 }
 
-function openClassLink(config: typeof classLinks) {
+async function openClassLink(config: typeof classLinks) {
   const date = new Date();
   const weekDay = WEEK_DAYS[date.getDay()];
 
@@ -104,9 +104,9 @@ function openClassLink(config: typeof classLinks) {
     colorLog(`<green><b>[LAUNCHING]</b> Launching <b>${upcomingClass.name}</b></green>`);
 
     if (upcomingClass.link) {
-      opn(upcomingClass.link);
+      await opn(upcomingClass.link);
     } else {
-      opn(
+      await opn(
         `https://auto-class-launcher-alarm.vercel.app/?className=${encodeURIComponent(
           upcomingClass.name
         )}&timing=${upcomingClass.hour}:${`0${upcomingClass.minutes}`.slice(-2)}`
