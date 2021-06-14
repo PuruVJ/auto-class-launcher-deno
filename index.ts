@@ -5,7 +5,7 @@ import { normalize } from 'https://deno.land/std@0.97.0/path/mod.ts';
 import { exists } from 'https://deno.land/std@0.97.0/fs/mod.ts';
 import { isFuture, isPast } from 'https://cdn.skypack.dev/date-fns';
 
-const WEEK_DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
+const WEEK_DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
 
 const todaysClassLaunched: Record<string, boolean> = {};
 
@@ -67,7 +67,7 @@ async function openClassLink(config: typeof classLinks) {
 
   // Today can be a class
 
-  const todayClasses = getClassesToday(weekDay as DayOfClass, config);
+  const todayClasses = getClassesToday(weekDay, config);
   const upcomingClass = todayClasses.find((todayClass) => {
     const classDate = new Date();
     classDate.setHours(todayClass.hour, todayClass.minutes);

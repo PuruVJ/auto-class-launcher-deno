@@ -9,8 +9,7 @@ export type ClassName =
   | 'practice-manufacturing'
   | 'env-design';
 
-export type DayOfClass = 'mon' | 'tue' | 'wed' | 'thu' | 'fri';
-
+export type DayOfClass = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 export type ClassLink = {
   times: { day: DayOfClass; time: string }[];
   link?: string;
