@@ -1,31 +1,11 @@
-export type ClassName =
-  | 'diff-equations'
-  | 'physics'
-  | 'eng-graphics'
-  | 'practice-eng-graphics'
-  | 'dsa'
-  | 'practice-dsa'
-  | 'disc-structures'
-  | 'practice-manufacturing'
-  | 'env-design';
-
 export type DayOfClass = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 export type ClassLink = {
   times: { day: DayOfClass; time: string }[];
   link?: string;
 };
 
-export const classLinks: Record<ClassName, ClassLink> = {
-  'diff-equations': {
-    link: 'https://meet.google.com/ajp-noxv-zng?authuser=2',
-    times: [
-      { day: 'mon', time: '9:00' },
-      { day: 'tue', time: '11:00' },
-      { day: 'thu', time: '12:00' },
-      { day: 'fri', time: '10:00' },
-    ],
-  },
-  'disc-structures': {
+export const classLinks: Record<string, ClassLink> = {
+  'Discrete Structures': {
     link: 'https://meet.google.com/txo-tvbd-zvt?authuser=2',
     times: [
       { day: 'tue', time: '12:00' },
@@ -34,7 +14,7 @@ export const classLinks: Record<ClassName, ClassLink> = {
       { day: 'fri', time: '15:00' },
     ],
   },
-  dsa: {
+  DSA: {
     link: 'https://meet.google.com/iha-ajkk-map?authuser=2',
     times: [
       { day: 'tue', time: '10:00' },
@@ -42,11 +22,11 @@ export const classLinks: Record<ClassName, ClassLink> = {
       { day: 'fri', time: '14:00' },
     ],
   },
-  'practice-dsa': {
+  'DSA Practise': {
     link: 'https://meet.google.com/iha-ajkk-map?authuser=2',
     times: [{ day: 'tue', time: '14:00' }],
   },
-  'eng-graphics': {
+  'Engineering Graphics': {
     link: 'https://meet.google.com/uaa-brhr-rwy?authuser=2',
     times: [
       { day: 'mon', time: '12:00' },
@@ -54,14 +34,14 @@ export const classLinks: Record<ClassName, ClassLink> = {
       { day: 'mon', time: '12:00' },
     ],
   },
-  'practice-eng-graphics': {
+  'Engineering Graphics Practise': {
     link: 'https://meet.google.com/uaa-brhr-rwy?authuser=2',
     times: [{ day: 'mon', time: '14:00' }],
   },
-  'practice-manufacturing': {
+  'Design & Manufacturing Lab': {
     times: [{ day: 'thu', time: '16:00' }],
   },
-  physics: {
+  Waves: {
     link: 'https://meet.google.com/osh-yivo-sof?authuser=2',
     times: [
       { day: 'mon', time: '10:00' },
@@ -70,7 +50,7 @@ export const classLinks: Record<ClassName, ClassLink> = {
       { day: 'fri', time: '11:00' },
     ],
   },
-  'env-design': {
+  'Environmental Design': {
     times: [{ day: 'fri', time: '16:00' }],
   },
 };

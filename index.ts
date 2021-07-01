@@ -1,5 +1,5 @@
 import { opn } from 'https://denopkg.com/hashrock/deno-opn/opn.ts';
-import { DayOfClass, classLinks, ClassName } from './classLinks.ts';
+import { DayOfClass, classLinks } from './classLinks.ts';
 import { colorize } from 'https://deno.land/x/ink@1.3/mod.ts';
 import { normalize } from 'https://deno.land/std@0.97.0/path/mod.ts';
 import { exists } from 'https://deno.land/std@0.97.0/fs/mod.ts';
@@ -31,7 +31,7 @@ function getHourAndMinutes(time: string): [hours: number, minutes: number] {
 function getClassesToday(dayOfWeek: DayOfClass, config: typeof classLinks) {
   const classesContent = Object.entries(config);
 
-  const classesToday: { name: ClassName; hour: number; minutes: number; link: string }[] = [];
+  const classesToday: { name: string; hour: number; minutes: number; link: string }[] = [];
 
   for (const [className, classContent] of classesContent) {
     const todayTime = classContent.times.find((time) => time.day === dayOfWeek);
@@ -44,7 +44,7 @@ function getClassesToday(dayOfWeek: DayOfClass, config: typeof classLinks) {
       hour,
       minutes,
       link: classContent.link || '',
-      name: className as ClassName,
+      name: className,
     });
   }
 
