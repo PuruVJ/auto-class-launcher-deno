@@ -103,15 +103,13 @@ async function openClassLink(config: typeof classLinks) {
     // Launch class
     colorLog(`<green><b>[LAUNCHING]</b> Launching <b>${upcomingClass.name}</b></green>`);
 
-    if (upcomingClass.link) {
-      await opn(upcomingClass.link);
-    } else {
-      await opn(
-        `https://auto-class-launcher-alarm.vercel.app/?className=${encodeURIComponent(
-          upcomingClass.name
-        )}&timing=${upcomingClass.hour}:${`0${upcomingClass.minutes}`.slice(-2)}`
-      );
-    }
+    const link =
+      upcomingClass.link ||
+      `https://auto-class-launcher-alarm.vercel.app/?className=${encodeURIComponent(
+        upcomingClass.name
+      )}&timing=${upcomingClass.hour}:${`0${upcomingClass.minutes}`.slice(-2)}`;
+
+    await opn(link);
 
     todaysClassLaunched[upcomingClass.name] = true;
   }
